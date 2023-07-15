@@ -1,16 +1,16 @@
--- To display the available databases 
+-- -- To display the available databases 
 -- SHOW DATABASES;
 
--- Creating a new database
+-- -- Creating a new database
 -- CREATE DATABASE soap_shop;
 
--- Using an existing database
+-- -- Using an existing database
 -- USE soap_shop;
 
--- Dropping a database
+-- -- Dropping a database
 -- DROP DATABASE soap_shop;
 
--- Creating a table
+-- -- Creating a table
 -- CREATE DATABASE pet_shop;
 -- USE pet_shop;
 
@@ -25,21 +25,21 @@
 --     age INT
 -- );
 
--- Displaying the tables in the current database
+-- -- Displaying the tables in the current database
 -- SHOW TABLES;
 
--- Displaying the columns for a table
+-- -- Displaying the columns for a table
 -- SHOW COLUMNS FROM cats;
 
--- Describing an existing table
+-- -- Describing an existing table
 -- DESC cats;
 
--- Dropping a table
+-- -- Dropping a table
 -- DROP TABLE dogs;
 
--- ---------------------------------
--- EXERCISE: Tables Basics Activity
--- ---------------------------------
+-- -- ---------------------------------
+-- -- EXERCISE: Tables Basics Activity
+-- -- ---------------------------------
 
 -- CREATE DATABASE bakery;
 -- USE bakery;
