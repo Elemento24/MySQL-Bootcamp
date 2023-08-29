@@ -1,40 +1,40 @@
--- -- One can find an exhaustive list of Data Types offered by MySQL here ...
--- -- ... https://dev.mysql.com/doc/refman/8.0/en/data-types.html
+-- One can find an exhaustive list of Data Types offered by MySQL here ...
+-- ... https://dev.mysql.com/doc/refman/8.0/en/data-types.html
 
--- -- Pre-requisites
--- SHOW DATABASES;
--- USE books_db;
--- SHOW TABLES;
+-- Pre-requisites
+SHOW DATABASES;
+USE books_db;
+SHOW TABLES;
 
--- -- Using `VARCHAR`
--- CREATE TABLE friends (
---     name VARCHAR(10)
--- );
+-- Using `VARCHAR`
+CREATE TABLE friends (
+    name VARCHAR(10)
+);
 
--- INSERT INTO friends (name)
--- VALUES ('Tom'),
---     ('Juan Pablo'),
---     ('James');
+INSERT INTO friends (name)
+VALUES ('Tom'),
+    ('Juan Pablo'),
+    ('James');
 
--- -- It will produce an error, and won't store any data corresponding to this
--- INSERT INTO friends (name)
--- VALUES ('Helena Charles');
+-- It will produce an error, and won't store any data corresponding to this
+INSERT INTO friends (name)
+VALUES ('Helena Charles');
 
--- SELECT * FROM friends;
+SELECT * FROM friends;
 
--- -- Using `CHAR`
--- CREATE TABLE states (
---     abbr CHAR(2)
--- );
+-- Using `CHAR`
+CREATE TABLE states (
+    abbr CHAR(2)
+);
 
--- INSERT INTO states (abbr)
--- VALUES ('CA'), ('NY');
+INSERT INTO states (abbr)
+VALUES ('CA'), ('NY');
 
--- -- It will produce an error, and won't store any data corresponding to this
--- INSERT INTO states (abbr)
--- VALUES ('XYZ');
+-- It will produce an error, and won't store any data corresponding to this
+INSERT INTO states (abbr)
+VALUES ('XYZ');
 
--- SELECT * FROM states;
+SELECT * FROM states;
 
 /*
 -> Both CHAR & VARCHAR are defined with a fixed length, which is the maximum length of the strings ...
@@ -49,15 +49,15 @@
 ... the fact that it stored after padding to the maximum length. 
 */
 
--- -- Using different types of `INTEGER` types; `SIGNED` and `UNSIGNED`
--- CREATE TABLE parent (
---     children TINYINT UNSIGNED
--- );
+-- Using different types of `INTEGER` types; `SIGNED` and `UNSIGNED`
+CREATE TABLE parent (
+    children TINYINT UNSIGNED
+);
 
--- DESC parent;
+DESC parent;
 
--- INSERT INTO parent (children)
--- VALUES (4), (-3);
+INSERT INTO parent (children)
+VALUES (4), (-3);
 
 /*
 -> There are different integer types, `TINYINT`, `SMALLINT`, `MEDIUMINT`, `INT`, and `BIGINT`.
@@ -85,17 +85,17 @@
 ... around 8 bytes, and experiences precision issues at around 15 digits.
 */
 
--- CREATE TABLE nums (
---     x FLOAT,
---     y DOUBLE
--- );
+CREATE TABLE nums (
+    x FLOAT,
+    y DOUBLE
+);
 
--- INSERT INTO nums (x, y)
--- VALUES (1.123, 1.123),
---     (1.12345678, 1.12345678),
---     (1.123456789123456789, 1.123456789123456789);
+INSERT INTO nums (x, y)
+VALUES (1.123, 1.123),
+    (1.12345678, 1.12345678),
+    (1.123456789123456789, 1.123456789123456789);
 
--- SELECT * FROM nums;
+SELECT * FROM nums;
 
 /*
 -> For storing dates and time, we can use data-types such as `DATE`, `TIME` and `DATETIME`.
@@ -105,10 +105,130 @@
 -> `DATETIME` stores both date and time in the following format: `YYYY-MM-DD HH:MM:SS`. 
 */
 
--- -- ---------------------------------
--- -- EXERCISE: String Functions
--- -- ---------------------------------
+CREATE TABLE people (
+    name VARCHAR(100),
+    birthdate DATE,
+    birthtime TIME,
+    birthdt DATETIME
+);
 
--- -- ---------------------------------
--- -- END OF EXERCISE
--- -- ---------------------------------
+INSERT INTO people (name, birthdate, birthtime, birthdt)
+VALUES 
+    ('Elton', '2000-12-25', '11:00:00', '2000-12-25 11:00:00'),
+    ('Lulu', '1985-04-11', '9:00:00', '1985-04-11 9:00:00'), 
+    ('Juan', '2020-08-15', '23:00:00', '2020-05-15 23:00:00');
+
+SELECT CURTIME();
+SELECT CURDATE();
+SELECT NOW();
+ 
+INSERT INTO people (name, birthdate, birthtime, birthdt)
+VALUES ('Hazel', CURDATE(), CURTIME(), NOW());
+
+SELECT 
+    birthdate,
+    DAY(birthdate),
+    DAYOFWEEK(birthdate),
+    DAYOFYEAR(birthdate)
+FROM people;
+ 
+SELECT 
+    birthdate,
+    MONTHNAME(birthdate),
+    YEAR(birthdate)
+FROM people;
+
+SELECT 
+    birthtime,
+    HOUR(birthtime),
+    MINUTE(birthtime)
+FROM people;
+ 
+SELECT 
+    birthdt,
+    MONTH(birthdt),
+    DAY(birthdt),
+    HOUR(birthdt),
+    MINUTE(birthdt)
+FROM people;
+
+/*
+-> https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html#function_date-formatD
+-> In the above URL, one can find the various string specifiers using which a date can be formatted
+*/
+
+SELECT birthdate, DATE_FORMAT(birthdate, '%a %b %D') FROM people;
+SELECT birthdt, DATE_FORMAT(birthdt, '%H:%i') FROM people;
+SELECT birthdt, DATE_FORMAT(birthdt, 'BORN ON: %r') FROM people;
+
+SELECT CURDATE();
+SELECT DATEDIFF(CURDATE(), birthdate) FROM people;
+SELECT DATE_ADD(birthdate, INTERVAL 18 YEAR) FROM people;
+SELECT DATE_SUB(birthdate, INTERVAL 1 DAY) FROM people;
+
+SELECT CURTIME();
+SELECT TIMEDIFF(CURTIME(), '07:00:00');
+
+SELECT NOW() - INTERVAL 18 YEAR;
+
+SELECT 
+    name, birthdate, YEAR(birthdate + INTERVAL 21 YEAR) AS will_be_21
+FROM people;
+
+/*
+-> TIMESTAMP is a data-type similar to DATETIME, however TIMESTAMP has a smaller range.
+-> Due to having a smaller range, TIMESTAMP takes up less memory in storage.
+-> So, if we are storing things like birthdays of users, DATETIME makes more sense, but if we are ...
+... storing things like last updated time, we can use TIMESTAMP
+*/
+
+CREATE TABLE captions (
+    text VARCHAR(150),
+    created_at TIMESTAMP default CURRENT_TIMESTAMP
+);
+
+INSERT INTO captions (text)
+VALUES ('Just me and the girls chilling!');
+
+INSERT INTO captions (text)
+VALUES ('Beautiful Sunset!');
+
+/*
+-> If we use `ON UPDATE` for any column, say `updated_at`, then whenever any other column is updated ...
+... in a row, `updated_at` will have a new value for that row. 
+*/
+
+CREATE TABLE captions2 (
+    text VARCHAR(150),
+    created_at TIMESTAMP default CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+INSERT INTO captions2 (text)
+VALUES ('I love life!');
+UPDATE captions2 SET text = 'I love life again!';
+UPDATE captions2 SET text = 'I love life again!!!';
+
+-- ---------------------------------
+-- EXERCISE: Data Types
+-- ---------------------------------
+
+SELECT CURTIME();
+SELECT CURDATE();
+SELECT DAYOFWEEK(CURDATE());
+SELECT DAYNAME(CURDATE());
+SELECT DATE_FORMAT(CURDATE(), '%m/%d/%Y');
+SELECT DATE_FORMAT(NOW(), '%M %D at %k:%i');
+
+CREATE TABLE tweets (
+    content VARCHAR(150),
+    username VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO tweets (content, username)
+VALUES ('Hello World', 'Elon');
+
+-- ---------------------------------
+-- END OF EXERCISE
+-- ---------------------------------
